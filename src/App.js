@@ -34,7 +34,7 @@ function App() {
     userHasAuthenticated(false);
     history.push('/login');//go to login page after logout
   }
-
+  
   return (
     !isAuthenticating &&
     <div className="App container">
