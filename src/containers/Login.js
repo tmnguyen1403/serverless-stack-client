@@ -1,27 +1,33 @@
 import React, { useState } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import './Login.css';
 import { Auth } from 'aws-amplify';
 import { useAppContext } from '../libs/contextLib';
 import { useHistory } from 'react-router-dom';
 import LoaderButton from '../components/LoaderButton';
 import { onError } from '../libs/errorLib';
+import { useFormFields } from '../libs/hooksLib';
+import './Login.css';
+
 
 export default function Login() {
     const { userHasAuthenticated } = useAppContext();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const history = useHistory();
+    const [fields, handleFieldChange] = useFormFields({
+        email: "",
+        password: ""
+    });
 
     function validateForm() {
         const EMAIL_MIN_LENGTH = 8;
         const PASSWORD_MIN_LENGTH = 6;
+        const {email, password} = fields;
         return email.length >= EMAIL_MIN_LENGTH && password.length >= PASSWORD_MIN_LENGTH;
     }
 
     async function handleSubmit(event) {
         event.preventDefault();
+        const {email, password} = fields;
 
         setIsLoading(true);
         try {
@@ -42,16 +48,16 @@ export default function Login() {
                     <FormControl
                         autoFocus
                         type="email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        value={fields.email}
+                        onChange={handleFieldChange}
                      />
                 </FormGroup>
                 <FormGroup controlId="password" bsSize="large">
                     <ControlLabel>Password</ControlLabel>
                     <FormControl
                         type="password"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
+                        value={fields.password}
+                        onChange={handleFieldChange}
                     />
                 </FormGroup>
                 <LoaderButton block bsSize="large" disabled={!validateForm()} type="submit" isLoading={isLoading}>
